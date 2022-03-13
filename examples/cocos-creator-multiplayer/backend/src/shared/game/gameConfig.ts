@@ -1,6 +1,9 @@
+// 游戏配置参数
 export const gameConfig = {
+    // 帧同步速度(每秒)
     syncRate: 10,
 
+    // 移动速度
     moveSpeed: 10,
 
     // 箭矢飞行时间（毫秒）

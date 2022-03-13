@@ -5,6 +5,9 @@ export interface ReqJoin {
 
 }
 
+/**
+ * 此处采用状态同步, 进入房间之后再采用帧同步.
+ */
 export interface ResJoin {
     /** 加入房间后，自己的 ID */
     playerId: number,
