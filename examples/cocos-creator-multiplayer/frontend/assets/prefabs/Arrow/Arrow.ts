@@ -7,14 +7,21 @@ const { ccclass, property } = _decorator;
 
 const ARROW_TOP = 7;
 
+/**
+ * 箭
+ */
 @ccclass('Arrow')
 export class Arrow extends Component {
 
+    // 唯一ID
     id!: number;
+    // 状态数据
     state!: ArrowState;
 
     @property(Node)
     arrow!: Node;
+
+    // 落点圆圈
     @property(Node)
     circle!: Node;
 
@@ -42,7 +49,7 @@ export class Arrow extends Component {
     }
 
     update() {
-        //下一个目标位置
+        //下一个目标位置(比例)
         let percent = MathUtil.limit((Date.now() - this._startTime) / (this._endTime - this._startTime), 0, 1);
         this._updatePosAndForward(percent);
 
@@ -60,12 +67,13 @@ export class Arrow extends Component {
 
         this.circle.getComponent(MeshRenderer)?.material!.setProperty('mainColor', new Color(255, 0, 0, 255));
 
-        // 落地 1 秒后消失
+        // 落地 1 秒后消失(单位为秒)
         this.scheduleOnce(() => {
             this.node.removeFromParent()
         }, 1)
     }
 
+    // 更新位置和方向
     private _updatePosAndForward(percent: number) {
         let nextPos = this._getPos(percent);
         this.arrow.position = nextPos;
@@ -75,7 +83,9 @@ export class Arrow extends Component {
         this.arrow.forward = nextPos.clone().subtract(lastPos).normalize();
     }
 
+    // 计算位置
     private _getPos(percent: number) {
+        // 插值
         let pos = this._startPos.clone().lerp(this._endPos, percent)
         pos.y = ARROW_TOP * Math.cos(percent * Math.PI - Math.PI / 2);
         return pos;

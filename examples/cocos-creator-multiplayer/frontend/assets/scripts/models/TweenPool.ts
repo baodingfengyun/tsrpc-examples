@@ -1,5 +1,6 @@
 import { Tween } from "cc";
 
+// 插值池
 export class TweenPool {
 
     private _tweens: Tween<any>[] = [];

@@ -12,10 +12,13 @@ export class GameManager {
 
     client: WsClient<ServiceType>;
     
+    // 游戏状态
     gameSystem = new GameSystem();
 
+    // 上一次权威状态
     lastServerState: GameSystemState = this.gameSystem.state;
-    lastRecvSetverStateTime = 0;
+    // 上一次接收权威状态时间
+    lastRecvServerStateTime = 0;
     selfPlayerId: number = -1;
     lastSN = 0;
 
@@ -29,6 +32,7 @@ export class GameManager {
             json: true,
             // logger: console
         });;
+        // 接收权威消息后处理
         client.listenMsg('server/Frame', msg => { this._onServerSync(msg) });
 
         // 模拟网络延迟 可通过 URL 参数 ?lag=200 设置延迟
@@ -69,10 +73,14 @@ export class GameManager {
 
         this.gameSystem.reset(ret.res.gameState);
         this.lastServerState = Object.merge(ret.res.gameState);
-        this.lastRecvSetverStateTime = Date.now();
+        this.lastRecvServerStateTime = Date.now();
         this.selfPlayerId = ret.res.playerId;
     }
 
+    /**
+     * 和解
+     * @param frame 服务端权威输入
+     */
     private _onServerSync(frame: MsgFrame) {
         // 回滚至上一次的权威状态
         this.gameSystem.reset(this.lastServerState);
@@ -81,12 +89,16 @@ export class GameManager {
         for (let input of frame.inputs) {
             this.gameSystem.applyInput(input);
         }
+        // 保存最新的权威状态为上一次的权威状态
         this.lastServerState = Object.merge({}, this.gameSystem.state);
-        this.lastRecvSetverStateTime = Date.now();
+        // 保存上一次的权威状态计算时间
+        this.lastRecvServerStateTime = Date.now();
 
         // 和解 = 权威状态 + 本地输入 （最新的本地预测状态）
         let lastSn = frame.lastSn ?? -1;
+        // 删除小于权威状态的消息
         this.pendingInputMsgs.remove(v => v.sn <= lastSn);
+        // 基于当前权威状态 + 本地预测输入
         this.pendingInputMsgs.forEach(m => {
             m.inputs.forEach(v => {
                 this.gameSystem.applyInput({
@@ -125,9 +137,9 @@ export class GameManager {
     localTimePast() {
         this.gameSystem.applyInput({
             type: 'TimePast',
-            dt: Date.now() - this.lastRecvSetverStateTime
+            dt: Date.now() - this.lastRecvServerStateTime
         });
-        this.lastRecvSetverStateTime = Date.now();
+        this.lastRecvServerStateTime = Date.now();
     }
 
 }

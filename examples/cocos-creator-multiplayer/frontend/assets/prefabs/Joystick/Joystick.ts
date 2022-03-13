@@ -15,6 +15,7 @@ export interface JoystickOutput {
     y: number
 }
 
+// 操纵杆
 @ccclass('Joystick')
 export class Joystick extends Component {
 
@@ -44,6 +45,7 @@ export class Joystick extends Component {
         this.disk.active = false;
     }
 
+    // 触摸开始
     private _touchStartPos?: Vec2;
     onTouch(e: EventTouch) {
         if (!e.touch) {
@@ -82,6 +84,7 @@ export class Joystick extends Component {
         })
     }
 
+    // 触摸结束
     onTouchEnd(e: EventTouch) {
         this.disk.active = false;
         this._touchStartPos = undefined;

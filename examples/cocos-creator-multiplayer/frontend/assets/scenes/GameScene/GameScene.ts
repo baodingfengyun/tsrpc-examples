@@ -9,6 +9,9 @@ import { gameConfig } from '../../scripts/shared/game/gameConfig';
 import { ArrowState } from '../../scripts/shared/game/state/ArrowState';
 const { ccclass, property } = _decorator;
 
+/**
+ * 客户端游戏场景
+ */
 @ccclass('GameScene')
 export class GameScene extends Component {
 
@@ -33,6 +36,7 @@ export class GameScene extends Component {
     @property(Node)
     attackPosIndicator!: Node;
 
+    // 前端游戏状态管理
     gameManager!: GameManager;
 
     private _playerInstances: { [playerId: number]: Player | undefined } = {};
@@ -74,6 +78,7 @@ export class GameScene extends Component {
         this.gameManager.join();
     }
 
+    // 逻辑帧
     update(dt: number) {
         this.gameManager.localTimePast();
 

@@ -5,6 +5,7 @@ import { gameConfig } from '../../scripts/shared/game/gameConfig';
 import { PlayerState } from '../../scripts/shared/game/state/PlayerState';
 const { ccclass, property } = _decorator;
 
+// 玩家
 @ccclass('Player')
 export class Player extends Component {
 
@@ -18,6 +19,7 @@ export class Player extends Component {
     @property(Texture2D)
     texOther!: Texture2D;
 
+    // 数据
     playerId!: number;
     isSelf = false;
     state!: PlayerState;
